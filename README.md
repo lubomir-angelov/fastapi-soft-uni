@@ -1067,9 +1067,9 @@ def test_ping(test_app):
 
 # APIRouter
 
-First, add a new folder called "api" to the "app" folder. Add an __init__.py file to the newly created folder.
+First, add a new folder called "api" to the "app" folder. Add an ```__init__.py``` file to the newly created folder.
 
-Now we can move the /ping route to a new file called project/app/api/ping.py:
+Now we can move the ```/ping``` route to a new file called ```project/app/api/ping.py```:
 
 ```python 
 # project/app/api/ping.py
@@ -1213,7 +1213,7 @@ Your project structure should now look like:
 
 # Database Init
 
-Next, let's move the register_tortoise helper to project/app/db.py to clean up project/app/main.py:
+Next, let's move the ```register_tortoise``` helper to ```project/app/db.py``` to clean up project/app/main.py:
 
 ```python 
 # project/app/db.py
@@ -1315,7 +1315,10 @@ Did not find any relations.
 web_dev=# \q
 ```
 
-Rather than applying the migrations via Aerich, which can be slow, there may be times where you just want to apply the schema to the database in its final state. So, let's add a generate_schema function to db.py for handling that:
+Rather than applying the migrations via Aerich, which can be slow, 
+there may be times where you just want to apply the schema to the 
+database in its final state. 
+So, let's add a ```generate_schema``` function to ``db.py`` for handling that:
 
 ```python 
 # project/app/db.py
@@ -1371,7 +1374,7 @@ if __name__ == "__main__":
     run_async(generate_schema())
 ```
 
-So, generate_schema calls Tortoise.init to set up Tortoise and then generates the schema.
+So, ```generate_schema``` calls ```Tortoise.init``` to set up ```Tortoise``` and then generates the schema.
 
 Run:
 
@@ -1439,7 +1442,7 @@ class SummaryPayloadSchema(BaseModel):
 We'll use this model in the next section.
 
 
-## Next, let's set up three new routes, following RESTful best practices, with TDD:
+### Next, let's set up three new routes, following RESTful best practices, with TDD:
 
 ```bash 
 Endpoint	HTTP Method	CRUD Method	Result
@@ -1465,7 +1468,7 @@ We'll break from the normal TDD flow for this first route in order to establish 
 
 # Code
 
-Create a new file called summaries.py in the "project/app/api" folder:
+Create a new file called ```summaries.py``` in the ```"project/app/api"``` folder:
 
 ```python 
 # project/app/api/summaries.py
@@ -1491,17 +1494,20 @@ async def create_summary(payload: SummaryPayloadSchema) -> SummaryResponseSchema
     return response_object
 ```
 
-Here, we defined a handler that expects a payload, payload: SummaryPayloadSchema, with a URL.
+Here, we defined a handler that expects a payload, ```payload: SummaryPayloadSchema```, with a URL.
 
 Essentially, when the route is hit with a POST request, FastAPI will read the body of the request and validate the data:
 
+```
 If valid, the data will be available in the payload parameter. FastAPI also generates JSON Schema definitions that are then used to automatically generate the OpenAPI schema and the API documentation.
 If invalid, an error is immediately returned.
+```
+
 Review the Request Body docs for more info.
 
 It's worth noting that we used the async declaration here since the database communication will be asynchronous. In other words, there are no blocking I/O operations in the handler.
 
-Next, create a new file called crud.py in the "project/app/api" folder:
+Next, create a new file called ```crud.py``` in the ```"project/app/api"``` folder:
 
 ```python 
 # project/app/api/crud.py
@@ -1522,18 +1528,18 @@ async def post(payload: SummaryPayloadSchema) -> int:
 
 We added a utility function called post for creating new summaries that takes a payload object and then:
 
-```bash 
+```
 Creates a new TextSummary instance
 Returns the generated ID
 ```
 
 Next, we need to define a new pydantic model for use as the response_model:
 
-```python x
+```python
 @router.post("/", response_model=SummaryResponseSchema, status_code=201)
 ```
 
-Update pydantic.py like so:
+Update ```pydantic.py``` like so:
 
 ```python 
 # project/app/models/pydantic.py
@@ -1550,9 +1556,9 @@ class SummaryResponseSchema(SummaryPayloadSchema):
     id: int
 ```
 
-The SummaryResponseSchema model inherits from the SummaryPayloadSchema model, adding an id field.
+The ```SummaryResponseSchema``` model inherits from the ```SummaryPayloadSchema``` model, adding an id field.
 
-Wire up the new router in main.py:
+Wire up the new router in ```main.py```:
 
 ```python 
 # project/app/main.py
@@ -1591,12 +1597,12 @@ async def shutdown_event():
     log.info("Shutting down...")
 ```
 
-Take note of the prefix URL along with the "summaries" tag, which will be applied to the OpenAPI schema (for grouping operations).
+Take note of the prefix URL along with the ```"summaries"``` tag, which will be applied to the OpenAPI schema (for grouping operations).
 
 Test it out with curl or HTTPie:
 
 ```bash x
-$ http --json POST http://localhost:8004/summaries/ url=http://testdriven.io
+$ http --json POST http://localhost:8004/summaries/ url=https://google.com
 ```
 
 You should see:
